@@ -39,3 +39,7 @@ Time taken for get nearest: 00:11:59.9639587
 ```
 
 => Add Index doesn't have effect on the column
+
+Summary:
+* PostGIS can handle pretty well.
+* I was monitor the log of application and to able to calculate that average response time `100ms` for 5000 fetch requests.

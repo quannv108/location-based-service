@@ -3,6 +3,8 @@ This project for testing the ability of postgresql with postGIS in handle search
 
 Project structure is designed for easy to use and extend, using DDD approach.
 
+![Project structure](./docs/images/project_structure.png)
+
 ### Test constraints
 * Machine specification:
   * CPU: 13th Gen Intel(R) Core(TM) i5-13600K   3.50 GHz

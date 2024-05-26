@@ -1,0 +1,48 @@
+﻿version: '3.8'
+services:
+  lbs:
+    image: lbs_http_api
+    build:
+      context: .
+      dockerfile: src/LBS.App.HttpApi/Dockerfile
+    ports:
+      - "5004:8080"
+    depends_on:
+      lbs_db_migrator:
+        condition: service_completed_successfully
+    links:
+      - lbs_db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    environment:
+      ConnectionStrings__Default: "Host=lbs_db;Port=5432;Database=lbs;Username=postgres;Password=postgres"
+
+  lbs_db:
+    image: postgis/postgis:16-3.4-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: lbs
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  lbs_db_migrator:
+    image: lbs_db_migrator
+    build:
+      context: .
+      dockerfile: src/LBS.DbMigrator/Dockerfile
+    depends_on:
+      lbs_db:
+        condition: service_healthy
+    links:
+      - lbs_db
+    environment:
+      ConnectionStrings__Default: "Host=lbs_db;Port=5432;Database=lbs;Username=postgres;Password=postgres"
